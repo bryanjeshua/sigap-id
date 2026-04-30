@@ -3,12 +3,15 @@
 ### Sistem Intelijen Geospasial Adaptif Perkotaan Indonesia
 **Prediksi Kemacetan Berbasis Risiko Banjir & Cuaca untuk Optimasi Mobilitas Urban di Jabodetabek**
 
-[![Python](https://img.shields.io/badge/Python-3.12-blue.svg)](https://www.python.org)
+[![Live Demo](https://img.shields.io/badge/🚀_Live_Demo-Azure-0078D4.svg)](https://sigap-id-dashboard.azurewebsites.net)
+[![Python](https://img.shields.io/badge/Python-3.11-blue.svg)](https://www.python.org)
 [![XGBoost](https://img.shields.io/badge/XGBoost-3.2-orange.svg)](https://xgboost.readthedocs.io)
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.28-red.svg)](https://streamlit.io)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 > **AI Impact Challenge — Datathon 2026** · Topic: *Urban Resilience & Smart City*
+
+### 🌐 Live Demo: https://sigap-id-dashboard.azurewebsites.net
 
 ---
 
