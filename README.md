@@ -73,7 +73,7 @@ SIGAP-ID mengisi gap ini.
 
 ### Installation
 ```bash
-git clone https://github.com/<your-team>/sigap-id.git
+git clone https://github.com/bryanjeshua/sigap-id.git
 cd sigap-id
 pip install -r requirements.txt
 ```
