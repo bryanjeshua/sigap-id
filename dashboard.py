@@ -17,6 +17,32 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
+# ── Dicoding Verification Meta Tag ─────────────────────────────────────────────
+st.markdown(
+    '<meta name="dicoding:email" content="salmakurniadewi@gmail.com">',
+    unsafe_allow_html=True,
+)
+
+# Also inject into <head> via JS for Dicoding scraper compatibility
+st.components.v1.html(
+    """
+    <script>
+    (function() {
+      try {
+        var head = window.parent.document.head;
+        if (head && !window.parent.document.querySelector('meta[name="dicoding:email"]')) {
+          var m = window.parent.document.createElement('meta');
+          m.name = 'dicoding:email';
+          m.content = 'salmakurniadewi@gmail.com';
+          head.appendChild(m);
+        }
+      } catch (e) { console.log('meta injection skipped:', e); }
+    })();
+    </script>
+    """,
+    height=0,
+)
+
 # ── Styles ─────────────────────────────────────────────────────────────────────
 st.markdown("""
 <style>
