@@ -1,10 +1,10 @@
-#!/bin/bash
-# 1. Patch Streamlit's static index.html with Dicoding verification meta tag
-# 2. Launch Streamlit server
-
-python << 'PYEOF'
+"""
+Patch Streamlit's static index.html to inject Dicoding verification meta tag.
+Runs once at container startup before Streamlit boots.
+"""
 from pathlib import Path
 import streamlit as st
+
 try:
     index = Path(st.__file__).parent / "static" / "index.html"
     html = index.read_text(encoding="utf-8")
@@ -16,11 +16,4 @@ try:
     else:
         print(">>> Dicoding meta tag already present")
 except Exception as e:
-    print(f">>> Meta tag injection failed (continuing anyway): {e}")
-PYEOF
-
-python -m streamlit run dashboard.py \
-  --server.port 8000 \
-  --server.address 0.0.0.0 \
-  --server.enableCORS false \
-  --server.enableXsrfProtection false
+    print(f">>> Meta tag injection failed (continuing): {e}")
