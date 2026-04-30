@@ -9,38 +9,31 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import seaborn as sns
 import os
+from pathlib import Path
+
+# ── Inject Dicoding verification meta tag into Streamlit's static index.html ──
+# Runs once per container startup. Persists in the served HTML for scrapers
+# that don't execute JavaScript (i.e., Dicoding verification crawler).
+def _inject_dicoding_meta():
+    try:
+        index = Path(st.__file__).parent / "static" / "index.html"
+        if not index.exists():
+            return
+        html = index.read_text(encoding="utf-8")
+        meta = '<meta name="dicoding:email" content="salmakurniadewi@gmail.com"/>'
+        if 'dicoding:email' not in html:
+            html = html.replace('<head>', f'<head>{meta}', 1)
+            index.write_text(html, encoding="utf-8")
+    except Exception:
+        pass  # fail-soft: dashboard still works even if patch fails
+
+_inject_dicoding_meta()
 
 st.set_page_config(
     page_title="SIGAP-ID | Sistem Intelijen Geospasial Adaptif Perkotaan Indonesia",
     page_icon="🚦",
     layout="wide",
     initial_sidebar_state="expanded",
-)
-
-# ── Dicoding Verification Meta Tag ─────────────────────────────────────────────
-st.markdown(
-    '<meta name="dicoding:email" content="salmakurniadewi@gmail.com">',
-    unsafe_allow_html=True,
-)
-
-# Also inject into <head> via JS for Dicoding scraper compatibility
-st.components.v1.html(
-    """
-    <script>
-    (function() {
-      try {
-        var head = window.parent.document.head;
-        if (head && !window.parent.document.querySelector('meta[name="dicoding:email"]')) {
-          var m = window.parent.document.createElement('meta');
-          m.name = 'dicoding:email';
-          m.content = 'salmakurniadewi@gmail.com';
-          head.appendChild(m);
-        }
-      } catch (e) { console.log('meta injection skipped:', e); }
-    })();
-    </script>
-    """,
-    height=0,
 )
 
 # ── Styles ─────────────────────────────────────────────────────────────────────
