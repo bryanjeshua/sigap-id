@@ -215,9 +215,9 @@ sigap-id/
 
 | Nama | Role | Email Dicoding |
 |---|---|---|
-| [Anggota 1] | ML Engineer | [email] |
-| [Anggota 2] | Data Scientist | [email] |
-| [Anggota 3] | Backend / Dashboard | [email] |
+| Bryan Jeshua | ML Engineer | [email] |
+| Salma Kurnia | Data Scientist | [email] |
+| Mariano Senduk | Backend / Dashboard | [email] |
 
 ---
 
