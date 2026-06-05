@@ -28,6 +28,35 @@ def _inject_dicoding_meta():
 
 _inject_dicoding_meta()
 
+# ── Theme ──────────────────────────────────────────────────────────────────────
+if 'light_mode' not in st.session_state:
+    st.session_state.light_mode = False
+
+if st.session_state.light_mode:
+    T = dict(
+        bg0='#f8fafc', bg1='#f1f5f9', bg2='#ffffff', bg3='#e2e8f0',
+        accent='#d97706', accent_dim='rgba(217,119,6,0.08)',
+        accent_border='rgba(217,119,6,0.25)',
+        text0='#0f172a', text1='#475569', text2='#94a3b8',
+        border='#e2e8f0',
+        fig_bg='#f1f5f9', ax_bg='#ffffff',
+        legend_fg='#334155', legend_bg='#f8fafc',
+        label='#64748b', title='#0f172a',
+        tick='#475569',
+    )
+else:
+    T = dict(
+        bg0='#07090f', bg1='#0c1120', bg2='#111827', bg3='#1a2540',
+        accent='#f59e0b', accent_dim='rgba(245,158,11,0.08)',
+        accent_border='rgba(245,158,11,0.25)',
+        text0='#f1f5f9', text1='#94a3b8', text2='#475569',
+        border='#1e2d3d',
+        fig_bg='#0c1120', ax_bg='#0c1120',
+        legend_fg='#94a3b8', legend_bg='#111827',
+        label='#64748b', title='#e2e8f0',
+        tick='#94a3b8',
+    )
+
 st.set_page_config(
     page_title="SIGAP-ID | Sistem Intelijen Geospasial Adaptif Perkotaan Indonesia",
     page_icon="🚦",
@@ -59,15 +88,24 @@ st.markdown("""
 
 /* ── hide streamlit chrome ── */
 #MainMenu, footer { visibility: hidden; }
-.stDeployButton, [data-testid="stToolbar"] { display: none !important; }
+.stDeployButton,
+[data-testid="stToolbarActions"],
+[data-testid="stMainMenu"],
+[data-testid="stStatusWidget"],
+[data-testid="stHeaderActionElements"] { display: none !important; }
 
-/* ── always show sidebar toggle button ── */
+/* ── sidebar toggle button ── */
+[data-testid="stSidebarCollapseButton"],
 [data-testid="collapsedControl"] {
     visibility: visible !important;
     display: flex !important;
     background: var(--bg-2) !important;
     border: 1px solid var(--border) !important;
     border-radius: 0 var(--radius) var(--radius) 0 !important;
+}
+[data-testid="stExpandSidebarButton"] {
+    visibility: visible !important;
+    display: flex !important;
 }
 
 /* ── global ── */
@@ -252,6 +290,34 @@ hr { border-color: var(--border) !important; margin: 1.25rem 0 !important; }
 </style>
 """, unsafe_allow_html=True)
 
+# ── Dynamic theme CSS override ─────────────────────────────────────────────────
+_light_extra = """
+    [data-baseweb="input"] input,
+    [data-baseweb="textarea"] textarea { color: #0f172a !important; background: #fff !important; }
+    [data-baseweb="select"] [data-testid="stSelectboxValue"] { color: #0f172a !important; }
+    [data-testid="stDataFrame"] td, [data-testid="stDataFrame"] th { color: #334155 !important; }
+    [data-testid="stMarkdownContainer"] p { color: #475569 !important; }
+    [data-testid="stRadio"] label span, [data-testid="stCheckbox"] label span { color: #334155 !important; }
+    .stAlert > div { color: #0f172a !important; }
+""" if st.session_state.light_mode else ""
+
+st.markdown(f"""<style>
+:root {{
+    --bg-0: {T['bg0']};
+    --bg-1: {T['bg1']};
+    --bg-2: {T['bg2']};
+    --bg-3: {T['bg3']};
+    --accent: {T['accent']};
+    --accent-dim: {T['accent_dim']};
+    --accent-border: {T['accent_border']};
+    --text-0: {T['text0']};
+    --text-1: {T['text1']};
+    --text-2: {T['text2']};
+    --border: {T['border']};
+}}
+{_light_extra}
+</style>""", unsafe_allow_html=True)
+
 ZONES = ['Jakarta Pusat', 'Jakarta Barat', 'Jakarta Selatan', 'Jakarta Timur', 'Jakarta Utara']
 
 # ── BMKG Live API ──────────────────────────────────────────────────────────────
@@ -329,15 +395,12 @@ def lookup_corridor(lookup_df, corridor, hour, is_weekend, rainfall_mm):
 
 # ── Sidebar ────────────────────────────────────────────────────────────────────
 with st.sidebar:
-    st.image(
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Jakarta_coat_of_arms.svg/200px-Jakarta_coat_of_arms.svg.png",
-        width=60,
-    )
     st.title("SIGAP-ID")
     st.caption("Sistem Intelijen Geospasial Adaptif Perkotaan Indonesia")
     st.divider()
 
     user_mode = st.radio("Mode Pengguna", ["Operator Logistik", "Dishub / BPBD"], index=0)
+    st.toggle("☀️ Light Mode", key="light_mode")
     st.divider()
 
     # ── Sumber Data Cuaca ──────────────────────────────────────────────────────
@@ -405,14 +468,14 @@ with col_h1:
     st.markdown(f"""
     <div style="margin-bottom: 0.25rem;">
         <span style="font-family:'Syne',sans-serif;font-size:1.9rem;font-weight:800;
-                     color:#f1f5f9;letter-spacing:-0.04em;line-height:1;">SIGAP-ID</span>
-        <span style="font-family:'IBM Plex Mono',monospace;font-size:0.65rem;color:#f59e0b;
-                     letter-spacing:0.15em;text-transform:uppercase;border:1px solid rgba(245,158,11,0.3);
+                     color:{T['text0']};letter-spacing:-0.04em;line-height:1;">SIGAP-ID</span>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:0.65rem;color:{T['accent']};
+                     letter-spacing:0.15em;text-transform:uppercase;border:1px solid {T['accent_border']};
                      padding:2px 7px;border-radius:2px;margin-left:10px;vertical-align:middle;">
             {data_src}
         </span>
     </div>
-    <p style="font-family:'DM Sans',sans-serif;color:#475569;font-size:0.8rem;
+    <p style="font-family:'DM Sans',sans-serif;color:{T['text2']};font-size:0.8rem;
               letter-spacing:0.02em;margin:0;">
         Sistem Intelijen Geospasial Adaptif Perkotaan &nbsp;·&nbsp;
         Jabodetabek Risk Monitor &nbsp;·&nbsp; Mode: {user_mode}
@@ -509,27 +572,27 @@ with tab1:
 
     with col_map:
         st.subheader("Peta Risiko Real-Time")
-        fig, ax = plt.subplots(figsize=(8, 7), facecolor='#0c1120')
-        ax.set_facecolor('#0c1120')
+        fig, ax = plt.subplots(figsize=(8, 7), facecolor=T['fig_bg'])
+        ax.set_facecolor(T['ax_bg'])
         for _, row in df_display.iterrows():
             c = color_map[row['live_level']]
             ax.scatter(row['lon'], row['lat'], c=c, s=row['prob_macet']*300+50,
-                       alpha=0.85, edgecolors='white', linewidth=0.5, zorder=3)
+                       alpha=0.85, edgecolors=T['bg0'], linewidth=0.5, zorder=3)
             ax.annotate(row['corridor'][:10], (row['lon'], row['lat']),
-                        fontsize=5, color='#64748b', ha='center', va='bottom',
+                        fontsize=5, color=T['label'], ha='center', va='bottom',
                         xytext=(0, 5), textcoords='offset points')
-        ax.set_xlabel('Longitude', color='#64748b', fontsize=7)
-        ax.set_ylabel('Latitude', color='#64748b', fontsize=7)
-        ax.tick_params(colors='#64748b', labelsize=7)
+        ax.set_xlabel('Longitude', color=T['label'], fontsize=7)
+        ax.set_ylabel('Latitude', color=T['label'], fontsize=7)
+        ax.tick_params(colors=T['label'], labelsize=7)
         for spine in ax.spines.values():
-            spine.set_edgecolor('#1e2d3d')
+            spine.set_edgecolor(T['border'])
         ax.legend(handles=[
             mpatches.Patch(color='#e74c3c', label=f'Macet ({n_macet})'),
             mpatches.Patch(color='#f39c12', label=f'Sedang ({n_sedang})'),
             mpatches.Patch(color='#2ecc71', label=f'Lancar ({n_lancar})'),
-        ], loc='upper left', facecolor='#111827', labelcolor='#94a3b8', edgecolor='#1e2d3d')
+        ], loc='upper left', facecolor=T['legend_bg'], labelcolor=T['legend_fg'], edgecolor=T['border'])
         ax.set_title(f'Risiko per Koridor — {hour_sim:02d}:00 WIB | {rainfall_sim}mm/hr',
-                     color='#e2e8f0', fontsize=9, fontweight='600')
+                     color=T['title'], fontsize=9, fontweight='600')
         st.pyplot(fig, use_container_width=True)
         plt.close()
 
@@ -628,12 +691,12 @@ with tab2:
 
         with col_map2:
             st.markdown("**Peta Rute**")
-            fig_r, ax_r = plt.subplots(figsize=(7, 6), facecolor='#0c1120')
-            ax_r.set_facecolor('#1e1e2e')
+            fig_r, ax_r = plt.subplots(figsize=(7, 6), facecolor=T['fig_bg'])
+            ax_r.set_facecolor(T['ax_bg'])
 
             # Dashed line origin → destination
             ax_r.plot([orig['lon'], dest['lon']], [orig['lat'], dest['lat']],
-                      '--', color='#888', alpha=0.45, linewidth=1.5, zorder=1)
+                      '--', color=T['label'], alpha=0.45, linewidth=1.5, zorder=1)
 
             # Intermediate corridors
             for _, row in route_df.iterrows():
@@ -641,16 +704,16 @@ with tab2:
                     continue
                 ax_r.scatter(row['lon'], row['lat'],
                              c=color_map[row['live_level']], s=110, alpha=0.85,
-                             edgecolors='white', linewidth=0.5, zorder=3)
+                             edgecolors=T['bg0'], linewidth=0.5, zorder=3)
                 ax_r.annotate(row['corridor'][:10], (row['lon'], row['lat']),
-                              fontsize=5, color='#64748b', ha='center', va='bottom',
+                              fontsize=5, color=T['label'], ha='center', va='bottom',
                               xytext=(0, 5), textcoords='offset points')
 
             # Origin (blue star) and destination (green star)
             ax_r.scatter(orig['lon'], orig['lat'], c='#3498db', s=220,
-                         marker='*', zorder=5, edgecolors='white', linewidth=0.5)
+                         marker='*', zorder=5, edgecolors=T['bg0'], linewidth=0.5)
             ax_r.scatter(dest['lon'], dest['lat'], c='#2ecc71', s=220,
-                         marker='*', zorder=5, edgecolors='white', linewidth=0.5)
+                         marker='*', zorder=5, edgecolors=T['bg0'], linewidth=0.5)
             ax_r.annotate(f"ASAL\n{origin_corr[:12]}", (orig['lon'], orig['lat']),
                           fontsize=6, color='#3498db', ha='center', va='top',
                           xytext=(0, -8), textcoords='offset points', fontweight='bold')
@@ -658,19 +721,19 @@ with tab2:
                           fontsize=6, color='#2ecc71', ha='center', va='top',
                           xytext=(0, -8), textcoords='offset points', fontweight='bold')
 
-            ax_r.set_xlabel('Longitude', color='#64748b', fontsize=7)
-            ax_r.set_ylabel('Latitude', color='#64748b', fontsize=7)
-            ax_r.tick_params(colors='white')
+            ax_r.set_xlabel('Longitude', color=T['label'], fontsize=7)
+            ax_r.set_ylabel('Latitude', color=T['label'], fontsize=7)
+            ax_r.tick_params(colors=T['tick'])
             for spine in ax_r.spines.values():
-                spine.set_edgecolor('#1e2d3d')
+                spine.set_edgecolor(T['border'])
             ax_r.legend(handles=[
                 mpatches.Patch(color='#e74c3c', label=f'Macet ({len(macet_rt)})'),
                 mpatches.Patch(color='#f39c12', label=f'Sedang ({len(sedang_rt)})'),
                 mpatches.Patch(color='#2ecc71', label=f'Lancar ({len(safe_rt)})'),
-            ], loc='upper left', facecolor='#111827', labelcolor='#94a3b8',
-               edgecolor='#1e2d3d', fontsize=7)
+            ], loc='upper left', facecolor=T['legend_bg'], labelcolor=T['legend_fg'],
+               edgecolor=T['border'], fontsize=7)
             ax_r.set_title(f'{origin_corr[:14]} → {dest_corr[:14]}',
-                           color='#e2e8f0', fontsize=9, fontweight='600')
+                           color=T['title'], fontsize=9, fontweight='600')
             st.pyplot(fig_r, use_container_width=True)
             plt.close()
 
@@ -756,37 +819,37 @@ with tab3:
                       if use_lookup else (20.0, 'Sedang', 0.3)
             spds.append(s); lvls.append(l); prbs.append(p)
 
-        fig2, axes2 = plt.subplots(1, 2, figsize=(12, 4), facecolor='#0c1120')
-        fig2.patch.set_facecolor('#1e1e2e')
+        fig2, axes2 = plt.subplots(1, 2, figsize=(12, 4), facecolor=T['fig_bg'])
+        fig2.patch.set_facecolor(T['bg1'])
         hour_labels = [f'{h%24:02d}:00' for h in hours_ahead]
 
         for ax in axes2:
-            ax.set_facecolor('#0c1120')
-            ax.tick_params(colors='#64748b', labelsize=7)
-            ax.xaxis.label.set_color('white')
-            ax.yaxis.label.set_color('white')
-            ax.title.set_color('white')
+            ax.set_facecolor(T['ax_bg'])
+            ax.tick_params(colors=T['label'], labelsize=7)
+            ax.xaxis.label.set_color(T['title'])
+            ax.yaxis.label.set_color(T['title'])
+            ax.title.set_color(T['title'])
             for spine in ax.spines.values():
-                spine.set_edgecolor('#1e2d3d')
+                spine.set_edgecolor(T['border'])
 
         axes2[0].fill_between(range(len(hours_ahead)), rain_profile, alpha=0.4, color='steelblue')
         axes2[0].plot(range(len(hours_ahead)), rain_profile, 'o-', color='steelblue', markersize=6)
         axes2[0].set_xticks(range(len(hours_ahead)))
-        axes2[0].set_xticklabels(hour_labels, rotation=30, color='#64748b')
-        axes2[0].set_ylabel('Rainfall (mm/hr)', color='#64748b', fontsize=8)
+        axes2[0].set_xticklabels(hour_labels, rotation=30, color=T['label'])
+        axes2[0].set_ylabel('Rainfall (mm/hr)', color=T['label'], fontsize=8)
         src_label = "BMKG Live (Decay Forecast)" if bmkg_live else "Simulasi Manual (Decay)"
         axes2[0].set_title(f'Input: {src_label}', fontweight='bold')
 
         axes2[1].bar(range(len(hours_ahead)), [p*100 for p in prbs],
-                     color=[color_map[l] for l in lvls], edgecolor='white', alpha=0.85)
+                     color=[color_map[l] for l in lvls], edgecolor=T['bg0'], alpha=0.85)
         axes2[1].axhline(60, color='red', linestyle='--', alpha=0.7, linewidth=1.5)
         axes2[1].set_xticks(range(len(hours_ahead)))
-        axes2[1].set_xticklabels(hour_labels, rotation=30, color='#64748b')
-        axes2[1].set_ylabel('P(Macet) %', color='#64748b', fontsize=8)
+        axes2[1].set_xticklabels(hour_labels, rotation=30, color=T['label'])
+        axes2[1].set_ylabel('P(Macet) %', color=T['label'], fontsize=8)
         axes2[1].set_ylim(0, 105)
         axes2[1].set_title(f'Output: Prediksi Risiko — {selected_corridor}', fontweight='bold')
         for i, (p, s) in enumerate(zip(prbs, spds)):
-            axes2[1].text(i, p*100 + 2, f'{s:.0f} km/h', ha='center', fontsize=7, color='#94a3b8')
+            axes2[1].text(i, p*100 + 2, f'{s:.0f} km/h', ha='center', fontsize=7, color=T['legend_fg'])
 
         plt.tight_layout()
         st.pyplot(fig2, use_container_width=True)
