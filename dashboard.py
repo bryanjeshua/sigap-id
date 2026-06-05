@@ -37,13 +37,209 @@ st.set_page_config(
 
 st.markdown("""
 <style>
-.metric-card {
-    background: #1e1e2e; border-radius: 10px; padding: 16px; margin: 6px 0;
-    border-left: 4px solid #3498db;
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=IBM+Plex+Mono:wght@300;400;500&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap');
+
+:root {
+    --bg-0: #07090f;
+    --bg-1: #0c1120;
+    --bg-2: #111827;
+    --bg-3: #1a2540;
+    --accent: #f59e0b;
+    --accent-dim: rgba(245,158,11,0.08);
+    --accent-border: rgba(245,158,11,0.25);
+    --danger: #ef4444;
+    --warn: #f97316;
+    --safe: #22c55e;
+    --text-0: #f1f5f9;
+    --text-1: #94a3b8;
+    --text-2: #475569;
+    --border: #1e2d3d;
+    --radius: 3px;
 }
-.alert-red   { border-left-color: #e74c3c !important; }
-.alert-orange{ border-left-color: #f39c12 !important; }
-.alert-green { border-left-color: #2ecc71 !important; }
+
+/* ── hide streamlit chrome ── */
+#MainMenu, footer { visibility: hidden; }
+.stDeployButton, [data-testid="stToolbar"] { display: none !important; }
+
+/* ── global ── */
+html, body, .stApp {
+    background-color: var(--bg-0) !important;
+    font-family: 'DM Sans', sans-serif !important;
+    color: var(--text-1) !important;
+}
+
+/* ── sidebar ── */
+[data-testid="stSidebar"] {
+    background-color: var(--bg-1) !important;
+    border-right: 1px solid var(--border) !important;
+}
+[data-testid="stSidebar"] * { font-family: 'DM Sans', sans-serif !important; }
+[data-testid="stSidebar"] h1 {
+    font-family: 'Syne', sans-serif !important;
+    font-weight: 800 !important;
+    font-size: 1.4rem !important;
+    letter-spacing: -0.03em !important;
+    color: var(--text-0) !important;
+}
+[data-testid="stSidebar"] .stCaption p {
+    color: var(--text-2) !important;
+    font-size: 0.72rem !important;
+    letter-spacing: 0.01em !important;
+}
+[data-testid="stSidebar"] hr { border-color: var(--border) !important; }
+
+/* ── headings ── */
+h1, h2, h3 {
+    font-family: 'Syne', sans-serif !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.025em !important;
+    color: var(--text-0) !important;
+}
+h1 { font-weight: 800 !important; }
+p, li { color: var(--text-1) !important; }
+
+/* ── metrics ── */
+[data-testid="metric-container"] {
+    background: var(--bg-2) !important;
+    border: 1px solid var(--border) !important;
+    border-top: 2px solid var(--accent) !important;
+    border-radius: var(--radius) !important;
+    padding: 1rem 1.1rem !important;
+}
+[data-testid="stMetricValue"] {
+    font-family: 'IBM Plex Mono', monospace !important;
+    font-size: 1.9rem !important;
+    font-weight: 500 !important;
+    color: var(--text-0) !important;
+    letter-spacing: -0.03em !important;
+}
+[data-testid="stMetricLabel"] > div {
+    font-family: 'DM Sans', sans-serif !important;
+    font-size: 0.68rem !important;
+    font-weight: 500 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.1em !important;
+    color: var(--text-2) !important;
+}
+[data-testid="stMetricDelta"] svg { display: none !important; }
+[data-testid="stMetricDelta"] > div {
+    font-family: 'IBM Plex Mono', monospace !important;
+    font-size: 0.72rem !important;
+    color: var(--text-2) !important;
+}
+
+/* ── tabs ── */
+.stTabs [data-baseweb="tab-list"] {
+    background: var(--bg-1) !important;
+    border-bottom: 1px solid var(--border) !important;
+    gap: 0 !important;
+    padding: 0 !important;
+}
+.stTabs [data-baseweb="tab"] {
+    background: transparent !important;
+    color: var(--text-2) !important;
+    font-family: 'DM Sans', sans-serif !important;
+    font-size: 0.73rem !important;
+    font-weight: 500 !important;
+    letter-spacing: 0.1em !important;
+    text-transform: uppercase !important;
+    padding: 0.7rem 1.4rem !important;
+    border: none !important;
+    border-bottom: 2px solid transparent !important;
+    border-radius: 0 !important;
+    transition: color 0.15s ease !important;
+}
+.stTabs [aria-selected="true"] {
+    color: var(--accent) !important;
+    border-bottom: 2px solid var(--accent) !important;
+    background: var(--accent-dim) !important;
+}
+.stTabs [data-baseweb="tab-highlight"] { display: none !important; }
+.stTabs [data-baseweb="tab-panel"] {
+    background: transparent !important;
+    padding-top: 1.5rem !important;
+}
+
+/* ── dataframe ── */
+[data-testid="stDataFrame"] {
+    border: 1px solid var(--border) !important;
+    border-radius: var(--radius) !important;
+}
+[data-testid="stDataFrame"] thead tr th {
+    background: var(--bg-3) !important;
+    font-family: 'DM Sans', sans-serif !important;
+    font-size: 0.7rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.08em !important;
+    color: var(--text-2) !important;
+}
+
+/* ── alerts ── */
+[data-baseweb="notification"] {
+    background: var(--bg-2) !important;
+    border-radius: var(--radius) !important;
+}
+.stSuccess > div { border-left: 3px solid var(--safe) !important; }
+.stWarning > div { border-left: 3px solid var(--warn) !important; }
+.stError   > div { border-left: 3px solid var(--danger) !important; }
+.stInfo    > div { border-left: 3px solid var(--accent) !important; }
+
+/* ── sliders ── */
+[data-testid="stSlider"] [data-baseweb="thumb"] {
+    background: var(--accent) !important;
+    border-color: var(--accent) !important;
+    width: 14px !important; height: 14px !important;
+}
+[data-testid="stSlider"] [data-baseweb="track-fill"] {
+    background: var(--accent) !important;
+}
+[data-testid="stSlider"] [data-baseweb="track"] {
+    background: var(--bg-3) !important;
+}
+
+/* ── radio + checkbox ── */
+[data-testid="stRadio"] label, [data-testid="stCheckbox"] label {
+    font-size: 0.85rem !important;
+    color: var(--text-1) !important;
+}
+[data-testid="stRadio"] [data-testid="stMarkdownContainer"] p {
+    font-size: 0.85rem !important;
+    color: var(--text-1) !important;
+}
+
+/* ── selectbox ── */
+[data-baseweb="select"] > div {
+    background: var(--bg-2) !important;
+    border-color: var(--border) !important;
+    color: var(--text-0) !important;
+    font-size: 0.85rem !important;
+}
+
+/* ── divider ── */
+hr { border-color: var(--border) !important; margin: 1.25rem 0 !important; }
+
+/* ── captions ── */
+.stCaption p {
+    font-size: 0.72rem !important;
+    color: var(--text-2) !important;
+    letter-spacing: 0.01em !important;
+}
+
+/* ── live pulse ── */
+@keyframes live-pulse {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.35; }
+}
+.live-indicator {
+    display: inline-block;
+    width: 7px; height: 7px;
+    background: var(--safe);
+    border-radius: 50%;
+    animation: live-pulse 1.8s ease-in-out infinite;
+    margin-right: 5px;
+    vertical-align: middle;
+    position: relative; top: -1px;
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -182,14 +378,31 @@ with st.sidebar:
 # ── Header ─────────────────────────────────────────────────────────────────────
 col_h1, col_h2 = st.columns([3, 1])
 with col_h1:
-    st.title("🚦 SIGAP-ID — Real-Time Risk Dashboard")
-    data_src = "🟢 BMKG Live" if bmkg_live else "⚪ Simulasi Manual"
-    st.caption(f"Mode: **{user_mode}** | Sumber cuaca: **{data_src}** | Update setiap 15 menit")
+    live_dot = '<span class="live-indicator"></span>' if bmkg_live else ''
+    data_src = f"{live_dot}BMKG Live" if bmkg_live else "Simulasi Manual"
+    rain_label = ("EKSTREM" if rainfall_sim > 50 else "LEBAT" if rainfall_sim > 30
+                  else "SEDANG" if rainfall_sim > 10 else "RINGAN" if rainfall_sim > 0
+                  else "TIDAK HUJAN")
+    st.markdown(f"""
+    <div style="margin-bottom: 0.25rem;">
+        <span style="font-family:'Syne',sans-serif;font-size:1.9rem;font-weight:800;
+                     color:#f1f5f9;letter-spacing:-0.04em;line-height:1;">SIGAP-ID</span>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:0.65rem;color:#f59e0b;
+                     letter-spacing:0.15em;text-transform:uppercase;border:1px solid rgba(245,158,11,0.3);
+                     padding:2px 7px;border-radius:2px;margin-left:10px;vertical-align:middle;">
+            {data_src}
+        </span>
+    </div>
+    <p style="font-family:'DM Sans',sans-serif;color:#475569;font-size:0.8rem;
+              letter-spacing:0.02em;margin:0;">
+        Sistem Intelijen Geospasial Adaptif Perkotaan &nbsp;·&nbsp;
+        Jabodetabek Risk Monitor &nbsp;·&nbsp; Mode: {user_mode}
+    </p>
+    """, unsafe_allow_html=True)
 with col_h2:
-    rain_cat = ("Ekstrem 🔴" if rainfall_sim > 50 else
-                "Lebat 🟠"  if rainfall_sim > 30 else
-                "Sedang 🟡" if rainfall_sim > 10 else
-                "Ringan 🟢" if rainfall_sim > 0  else "Tidak Hujan ⚪")
+    rain_cat = ("Ekstrem" if rainfall_sim > 50 else "Lebat" if rainfall_sim > 30
+                else "Sedang" if rainfall_sim > 10 else "Ringan" if rainfall_sim > 0
+                else "Tidak Hujan")
     st.metric("Curah Hujan", f"{rainfall_sim} mm/hr", rain_cat)
     st.metric("Jam Prediksi", f"{hour_sim:02d}:00 WIB",
               "Peak Morning" if 6 <= hour_sim <= 9 else
@@ -277,27 +490,27 @@ with tab1:
 
     with col_map:
         st.subheader("Peta Risiko Real-Time")
-        fig, ax = plt.subplots(figsize=(8, 7), facecolor='#1e1e2e')
-        ax.set_facecolor('#1e1e2e')
+        fig, ax = plt.subplots(figsize=(8, 7), facecolor='#0c1120')
+        ax.set_facecolor('#0c1120')
         for _, row in df_display.iterrows():
             c = color_map[row['live_level']]
             ax.scatter(row['lon'], row['lat'], c=c, s=row['prob_macet']*300+50,
                        alpha=0.85, edgecolors='white', linewidth=0.5, zorder=3)
             ax.annotate(row['corridor'][:10], (row['lon'], row['lat']),
-                        fontsize=5, color='white', ha='center', va='bottom',
+                        fontsize=5, color='#64748b', ha='center', va='bottom',
                         xytext=(0, 5), textcoords='offset points')
-        ax.set_xlabel('Longitude', color='white')
-        ax.set_ylabel('Latitude', color='white')
-        ax.tick_params(colors='white')
+        ax.set_xlabel('Longitude', color='#64748b', fontsize=7)
+        ax.set_ylabel('Latitude', color='#64748b', fontsize=7)
+        ax.tick_params(colors='#64748b', labelsize=7)
         for spine in ax.spines.values():
-            spine.set_edgecolor('#444')
+            spine.set_edgecolor('#1e2d3d')
         ax.legend(handles=[
             mpatches.Patch(color='#e74c3c', label=f'Macet ({n_macet})'),
             mpatches.Patch(color='#f39c12', label=f'Sedang ({n_sedang})'),
             mpatches.Patch(color='#2ecc71', label=f'Lancar ({n_lancar})'),
-        ], loc='upper left', facecolor='#2e2e3e', labelcolor='white', edgecolor='#555')
+        ], loc='upper left', facecolor='#111827', labelcolor='#94a3b8', edgecolor='#1e2d3d')
         ax.set_title(f'Risiko per Koridor — {hour_sim:02d}:00 WIB | {rainfall_sim}mm/hr',
-                     color='white', fontsize=11, fontweight='bold')
+                     color='#e2e8f0', fontsize=9, fontweight='600')
         st.pyplot(fig, use_container_width=True)
         plt.close()
 
@@ -325,103 +538,165 @@ with tab1:
 # ══════════════════════════════════════════════════════════════════════════════
 with tab2:
     st.subheader("🚗 Rekomendasi Rute Logistik")
-    st.caption("Pilih zona asal dan tujuan untuk melihat kondisi koridor dan rekomendasi rute aman.")
+    st.caption("Pilih koridor asal dan tujuan — sistem mendeteksi koridor di sepanjang rute secara geografis.")
+
+    all_corridors = sorted(df_all['corridor'].tolist())
+    default_orig  = all_corridors.index('Pluit-Muara Baru') if 'Pluit-Muara Baru' in all_corridors else 0
+    default_dest  = all_corridors.index('TB Simatupang')    if 'TB Simatupang'    in all_corridors else 5
 
     col_orig, col_dest = st.columns(2)
     with col_orig:
-        origin_zone = st.selectbox("📍 Zona Asal", ZONES, index=1,
-                                   key="origin_zone")
+        origin_corr = st.selectbox("📍 Koridor Asal", all_corridors,
+                                   index=default_orig, key="origin_corr")
     with col_dest:
-        dest_zone = st.selectbox("🏁 Zona Tujuan", ZONES, index=0,
-                                 key="dest_zone")
+        dest_corr = st.selectbox("🏁 Koridor Tujuan", all_corridors,
+                                 index=default_dest, key="dest_corr")
 
     st.divider()
 
-    # Corridors in each zone
-    df_orig = df_all[df_all['zone'] == origin_zone].copy().sort_values('prob_macet', ascending=False)
-    df_dest = df_all[df_all['zone'] == dest_zone].copy().sort_values('prob_macet', ascending=False)
-
-    def zone_risk_table(df_zone):
-        t = df_zone[['corridor','live_speed','live_level','prob_macet','flood_risk']].copy()
-        t['Status']       = t['live_level'].map(emoji_map) + ' ' + t['live_level']
-        t['Speed (km/h)'] = t['live_speed'].round(1)
-        t['P(Macet)']     = (t['prob_macet']*100).round(0).astype(int).astype(str) + '%'
-        t['Flood Risk']   = t['flood_risk'].round(2)
-        return t[['corridor','Status','Speed (km/h)','P(Macet)','Flood Risk']]
-
-    if origin_zone == dest_zone:
-        st.info("ℹ️ Zona asal dan tujuan sama — menampilkan kondisi seluruh koridor dalam zona.")
-        st.dataframe(zone_risk_table(df_orig), hide_index=True, use_container_width=True)
+    if origin_corr == dest_corr:
+        st.warning("⚠️ Pilih koridor yang berbeda untuk asal dan tujuan.")
     else:
-        c_orig, c_dest = st.columns(2)
-        with c_orig:
-            st.markdown(f"**📍 {origin_zone}** — {len(df_orig)} koridor")
-            st.dataframe(zone_risk_table(df_orig), hide_index=True,
-                         height=250, use_container_width=True)
-        with c_dest:
-            st.markdown(f"**🏁 {dest_zone}** — {len(df_dest)} koridor")
-            st.dataframe(zone_risk_table(df_dest), hide_index=True,
-                         height=250, use_container_width=True)
+        orig = df_all[df_all['corridor'] == origin_corr].iloc[0]
+        dest = df_all[df_all['corridor'] == dest_corr].iloc[0]
 
-    st.divider()
-    st.subheader("📋 Rekomendasi SIGAP-ID")
+        # ── Find corridors along the route (geographic bounding box) ────────────
+        BUFFER = 0.045  # ~5 km padding around the bounding box
+        min_lat = min(orig['lat'], dest['lat']) - BUFFER
+        max_lat = max(orig['lat'], dest['lat']) + BUFFER
+        min_lon = min(orig['lon'], dest['lon']) - BUFFER
+        max_lon = max(orig['lon'], dest['lon']) + BUFFER
 
-    # Combine origin + destination corridors for analysis
-    df_route = pd.concat([df_orig, df_dest]).drop_duplicates('corridor')
-    macet_corridors  = df_route[df_route['live_level'] == 'Macet']
-    safe_corridors   = df_route[df_route['live_level'] == 'Lancar'].sort_values('prob_macet')
-    sedang_corridors = df_route[df_route['live_level'] == 'Sedang']
+        route_df = df_all[
+            (df_all['lat'] >= min_lat) & (df_all['lat'] <= max_lat) &
+            (df_all['lon'] >= min_lon) & (df_all['lon'] <= max_lon)
+        ].copy()
 
-    # Time estimate: assume avg 4km per corridor segment
-    SEGMENT_KM = 4.0
-    avg_macet_spd = macet_corridors['live_speed'].mean() if len(macet_corridors) > 0 else 7.0
-    avg_safe_spd  = safe_corridors['live_speed'].mean()  if len(safe_corridors)  > 0 else 35.0
-    time_macet    = SEGMENT_KM / avg_macet_spd * 60
-    time_safe     = SEGMENT_KM / avg_safe_spd  * 60
-    savings_per   = max(0, time_macet - time_safe)
-    total_savings = len(macet_corridors) * savings_per
+        # Sort by projection onto origin→destination vector
+        dx = dest['lon'] - orig['lon']
+        dy = dest['lat'] - orig['lat']
+        dist = (dx**2 + dy**2) ** 0.5
+        if dist > 0:
+            route_df['_proj'] = (
+                (route_df['lon'] - orig['lon']) * dx +
+                (route_df['lat'] - orig['lat']) * dy
+            ) / dist
+            route_df = route_df.sort_values('_proj').drop(columns='_proj')
 
-    col_avoid, col_use = st.columns(2)
+        macet_rt  = route_df[route_df['live_level'] == 'Macet']
+        safe_rt   = route_df[route_df['live_level'] == 'Lancar'].sort_values('prob_macet')
+        sedang_rt = route_df[route_df['live_level'] == 'Sedang']
 
-    with col_avoid:
-        if len(macet_corridors) > 0:
-            st.error(f"🚫 **Hindari {len(macet_corridors)} Koridor Macet**")
-            for _, r in macet_corridors.iterrows():
-                st.markdown(f"- **{r['corridor']}** — {r['live_speed']:.0f} km/h | "
-                            f"P(Macet): {r['prob_macet']*100:.0f}%")
-        else:
-            st.success("✅ Tidak ada koridor macet di rute ini saat ini.")
+        # ── Map + Table ──────────────────────────────────────────────────────────
+        col_map2, col_tbl2 = st.columns([1.2, 1])
 
-    with col_use:
-        if len(safe_corridors) > 0:
-            st.success(f"✅ **Gunakan {len(safe_corridors)} Koridor Aman**")
-            for _, r in safe_corridors.head(5).iterrows():
-                st.markdown(f"- **{r['corridor']}** — {r['live_speed']:.0f} km/h | "
-                            f"P(Macet): {r['prob_macet']*100:.0f}%")
-        elif len(sedang_corridors) > 0:
-            st.warning(f"⚠️ **Koridor Tersedia (Sedang)**")
-            for _, r in sedang_corridors.head(5).iterrows():
-                st.markdown(f"- **{r['corridor']}** — {r['live_speed']:.0f} km/h | "
-                            f"P(Macet): {r['prob_macet']*100:.0f}%")
-        else:
-            st.warning("⚠️ Tidak ada koridor lancar yang tersedia di zona ini.")
+        with col_map2:
+            st.markdown("**Peta Rute**")
+            fig_r, ax_r = plt.subplots(figsize=(7, 6), facecolor='#0c1120')
+            ax_r.set_facecolor('#1e1e2e')
 
-    # Summary metrics
-    st.divider()
-    ms1, ms2, ms3 = st.columns(3)
-    ms1.metric("🚫 Koridor Harus Dihindari", len(macet_corridors))
-    ms2.metric("✅ Koridor Alternatif Aman",  len(safe_corridors))
-    if total_savings > 1:
-        ms3.metric("⏱️ Estimasi Penghematan Waktu",
-                   f"~{total_savings:.0f} menit",
-                   f"vs rute via koridor macet")
-    else:
-        ms3.metric("⏱️ Estimasi Waktu Tempuh", "Normal", "Tidak ada kemacetan")
+            # Dashed line origin → destination
+            ax_r.plot([orig['lon'], dest['lon']], [orig['lat'], dest['lat']],
+                      '--', color='#888', alpha=0.45, linewidth=1.5, zorder=1)
 
-    st.caption(
-        "ℹ️ Estimasi berdasarkan kecepatan rata-rata per koridor dan asumsi segmen 4 km. "
-        "Untuk navigasi turn-by-turn, gunakan Azure Maps Route API (roadmap Phase 1)."
-    )
+            # Intermediate corridors
+            for _, row in route_df.iterrows():
+                if row['corridor'] in (origin_corr, dest_corr):
+                    continue
+                ax_r.scatter(row['lon'], row['lat'],
+                             c=color_map[row['live_level']], s=110, alpha=0.85,
+                             edgecolors='white', linewidth=0.5, zorder=3)
+                ax_r.annotate(row['corridor'][:10], (row['lon'], row['lat']),
+                              fontsize=5, color='#64748b', ha='center', va='bottom',
+                              xytext=(0, 5), textcoords='offset points')
+
+            # Origin (blue star) and destination (green star)
+            ax_r.scatter(orig['lon'], orig['lat'], c='#3498db', s=220,
+                         marker='*', zorder=5, edgecolors='white', linewidth=0.5)
+            ax_r.scatter(dest['lon'], dest['lat'], c='#2ecc71', s=220,
+                         marker='*', zorder=5, edgecolors='white', linewidth=0.5)
+            ax_r.annotate(f"ASAL\n{origin_corr[:12]}", (orig['lon'], orig['lat']),
+                          fontsize=6, color='#3498db', ha='center', va='top',
+                          xytext=(0, -8), textcoords='offset points', fontweight='bold')
+            ax_r.annotate(f"TUJUAN\n{dest_corr[:12]}", (dest['lon'], dest['lat']),
+                          fontsize=6, color='#2ecc71', ha='center', va='top',
+                          xytext=(0, -8), textcoords='offset points', fontweight='bold')
+
+            ax_r.set_xlabel('Longitude', color='#64748b', fontsize=7)
+            ax_r.set_ylabel('Latitude', color='#64748b', fontsize=7)
+            ax_r.tick_params(colors='white')
+            for spine in ax_r.spines.values():
+                spine.set_edgecolor('#1e2d3d')
+            ax_r.legend(handles=[
+                mpatches.Patch(color='#e74c3c', label=f'Macet ({len(macet_rt)})'),
+                mpatches.Patch(color='#f39c12', label=f'Sedang ({len(sedang_rt)})'),
+                mpatches.Patch(color='#2ecc71', label=f'Lancar ({len(safe_rt)})'),
+            ], loc='upper left', facecolor='#111827', labelcolor='#94a3b8',
+               edgecolor='#1e2d3d', fontsize=7)
+            ax_r.set_title(f'{origin_corr[:14]} → {dest_corr[:14]}',
+                           color='#e2e8f0', fontsize=9, fontweight='600')
+            st.pyplot(fig_r, use_container_width=True)
+            plt.close()
+
+        with col_tbl2:
+            st.markdown(f"**Koridor di Sepanjang Rute** ({len(route_df)} terdeteksi)")
+            tbl_r = route_df[['corridor','zone','live_level','live_speed','prob_macet']].copy()
+            tbl_r['Status']   = tbl_r['live_level'].map(emoji_map) + ' ' + tbl_r['live_level']
+            tbl_r['km/h']     = tbl_r['live_speed'].round(1)
+            tbl_r['P(Macet)'] = (tbl_r['prob_macet']*100).round(0).astype(int).astype(str) + '%'
+            # Mark origin/destination
+            tbl_r['Koridor'] = tbl_r['corridor'].apply(
+                lambda c: f"📍 {c}" if c == origin_corr else (f"🏁 {c}" if c == dest_corr else c)
+            )
+            st.dataframe(tbl_r[['Koridor','zone','Status','km/h','P(Macet)']],
+                         hide_index=True, height=320, use_container_width=True)
+
+        # ── Recommendation ───────────────────────────────────────────────────────
+        st.divider()
+        st.subheader("📋 Rekomendasi SIGAP-ID")
+
+        col_av, col_us = st.columns(2)
+        with col_av:
+            if len(macet_rt) > 0:
+                st.error(f"🚫 **Hindari {len(macet_rt)} Koridor Macet**")
+                for _, r in macet_rt.iterrows():
+                    st.markdown(f"- **{r['corridor']}** ({r['zone']}) — "
+                                f"{r['live_speed']:.0f} km/h | P(Macet): {r['prob_macet']*100:.0f}%")
+            else:
+                st.success("✅ Tidak ada koridor macet di rute ini.")
+
+        with col_us:
+            if len(safe_rt) > 0:
+                st.success(f"✅ **Gunakan {len(safe_rt)} Koridor Aman**")
+                for _, r in safe_rt.head(5).iterrows():
+                    st.markdown(f"- **{r['corridor']}** ({r['zone']}) — "
+                                f"{r['live_speed']:.0f} km/h | P(Macet): {r['prob_macet']*100:.0f}%")
+            elif len(sedang_rt) > 0:
+                st.warning(f"⚠️ **Koridor Tersedia (Sedang)**")
+                for _, r in sedang_rt.head(5).iterrows():
+                    st.markdown(f"- **{r['corridor']}** ({r['zone']}) — "
+                                f"{r['live_speed']:.0f} km/h")
+            else:
+                st.warning("⚠️ Tidak ada koridor lancar di area ini saat ini.")
+
+        # Time savings estimate
+        SEGMENT_KM  = 4.0
+        avg_m_spd   = macet_rt['live_speed'].mean()  if len(macet_rt)  > 0 else 7.0
+        avg_s_spd   = safe_rt['live_speed'].mean()   if len(safe_rt)   > 0 else 35.0
+        savings     = len(macet_rt) * max(0, SEGMENT_KM/avg_m_spd*60 - SEGMENT_KM/avg_s_spd*60)
+
+        st.divider()
+        ms1, ms2, ms3 = st.columns(3)
+        ms1.metric("🗺️ Koridor di Rute",      len(route_df))
+        ms2.metric("🚫 Harus Dihindari",       len(macet_rt))
+        ms3.metric("⏱️ Estimasi Penghematan",
+                   f"~{savings:.0f} menit" if savings > 1 else "Rute Normal",
+                   "vs lewat koridor macet"  if savings > 1 else "")
+        st.caption(
+            "ℹ️ Koridor dideteksi secara geografis (bounding box asal→tujuan + buffer 5km). "
+            "Estimasi waktu: asumsi segmen 4 km per koridor. "
+            "Navigasi turn-by-turn via Azure Maps tersedia di roadmap Phase 1."
+        )
 
 # ══════════════════════════════════════════════════════════════════════════════
 # TAB 3 — Prediksi 6 Jam & Analisis
@@ -445,24 +720,24 @@ with tab3:
                       if use_lookup else (20.0, 'Sedang', 0.3)
             spds.append(s); lvls.append(l); prbs.append(p)
 
-        fig2, axes2 = plt.subplots(1, 2, figsize=(12, 4), facecolor='#1e1e2e')
+        fig2, axes2 = plt.subplots(1, 2, figsize=(12, 4), facecolor='#0c1120')
         fig2.patch.set_facecolor('#1e1e2e')
         hour_labels = [f'{h%24:02d}:00' for h in hours_ahead]
 
         for ax in axes2:
-            ax.set_facecolor('#2e2e3e')
-            ax.tick_params(colors='white')
+            ax.set_facecolor('#0c1120')
+            ax.tick_params(colors='#64748b', labelsize=7)
             ax.xaxis.label.set_color('white')
             ax.yaxis.label.set_color('white')
             ax.title.set_color('white')
             for spine in ax.spines.values():
-                spine.set_edgecolor('#444')
+                spine.set_edgecolor('#1e2d3d')
 
         axes2[0].fill_between(range(len(hours_ahead)), rain_profile, alpha=0.4, color='steelblue')
         axes2[0].plot(range(len(hours_ahead)), rain_profile, 'o-', color='steelblue', markersize=6)
         axes2[0].set_xticks(range(len(hours_ahead)))
-        axes2[0].set_xticklabels(hour_labels, rotation=30, color='white')
-        axes2[0].set_ylabel('Rainfall (mm/hr)', color='white')
+        axes2[0].set_xticklabels(hour_labels, rotation=30, color='#64748b')
+        axes2[0].set_ylabel('Rainfall (mm/hr)', color='#64748b', fontsize=8)
         src_label = "BMKG Live (Decay Forecast)" if bmkg_live else "Simulasi Manual (Decay)"
         axes2[0].set_title(f'Input: {src_label}', fontweight='bold')
 
@@ -470,12 +745,12 @@ with tab3:
                      color=[color_map[l] for l in lvls], edgecolor='white', alpha=0.85)
         axes2[1].axhline(60, color='red', linestyle='--', alpha=0.7, linewidth=1.5)
         axes2[1].set_xticks(range(len(hours_ahead)))
-        axes2[1].set_xticklabels(hour_labels, rotation=30, color='white')
-        axes2[1].set_ylabel('P(Macet) %', color='white')
+        axes2[1].set_xticklabels(hour_labels, rotation=30, color='#64748b')
+        axes2[1].set_ylabel('P(Macet) %', color='#64748b', fontsize=8)
         axes2[1].set_ylim(0, 105)
         axes2[1].set_title(f'Output: Prediksi Risiko — {selected_corridor}', fontweight='bold')
         for i, (p, s) in enumerate(zip(prbs, spds)):
-            axes2[1].text(i, p*100 + 2, f'{s:.0f} km/h', ha='center', fontsize=8, color='white')
+            axes2[1].text(i, p*100 + 2, f'{s:.0f} km/h', ha='center', fontsize=7, color='#94a3b8')
 
         plt.tight_layout()
         st.pyplot(fig2, use_container_width=True)
