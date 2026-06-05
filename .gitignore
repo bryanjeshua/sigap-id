@@ -30,6 +30,12 @@ Thumbs.db
 notebooks/run_all.py
 notebooks/extract_nb.py
 
-# Logs
+# Logs & temp files
 *.log
+*.zip
 .azure/
+
+# Generated ML artifacts (run generate_lookup.py to recreate)
+data/processed/*.pkl
+data/processed/xgb_model.pkl
+data/processed/le_*.pkl
