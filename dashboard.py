@@ -560,8 +560,15 @@ with tab2:
         orig = df_all[df_all['corridor'] == origin_corr].iloc[0]
         dest = df_all[df_all['corridor'] == dest_corr].iloc[0]
 
-        # ── Find corridors along the route (geographic bounding box) ────────────
-        BUFFER = 0.045  # ~5 km padding around the bounding box
+        # ── Find corridors along the route ───────────────────────────────────────
+        dx   = dest['lon'] - orig['lon']
+        dy   = dest['lat'] - orig['lat']
+        dist = (dx**2 + dy**2) ** 0.5
+
+        # Adaptive buffer: scales with route length (min ~2.2 km)
+        BUFFER   = max(0.020, dist * 0.40)
+        MAX_PERP = max(0.018, dist * 0.28)  # perpendicular tolerance
+
         min_lat = min(orig['lat'], dest['lat']) - BUFFER
         max_lat = max(orig['lat'], dest['lat']) + BUFFER
         min_lon = min(orig['lon'], dest['lon']) - BUFFER
@@ -572,16 +579,26 @@ with tab2:
             (df_all['lon'] >= min_lon) & (df_all['lon'] <= max_lon)
         ].copy()
 
-        # Sort by projection onto origin→destination vector
-        dx = dest['lon'] - orig['lon']
-        dy = dest['lat'] - orig['lat']
-        dist = (dx**2 + dy**2) ** 0.5
         if dist > 0:
+            # Perpendicular distance from each corridor to the origin→dest line
+            def _perp(row):
+                t = max(0.0, min(1.0,
+                    ((row['lon'] - orig['lon']) * dx +
+                     (row['lat'] - orig['lat']) * dy) / dist**2
+                ))
+                return (((row['lon'] - orig['lon'] - t * dx)**2 +
+                         (row['lat'] - orig['lat'] - t * dy)**2) ** 0.5)
+
+            route_df['_perp'] = route_df.apply(_perp, axis=1)
             route_df['_proj'] = (
                 (route_df['lon'] - orig['lon']) * dx +
                 (route_df['lat'] - orig['lat']) * dy
             ) / dist
-            route_df = route_df.sort_values('_proj').drop(columns='_proj')
+
+            # Keep only corridors close to the route line, sorted by position
+            route_df = (route_df[route_df['_perp'] <= MAX_PERP]
+                        .sort_values('_proj')
+                        .drop(columns=['_perp', '_proj']))
 
         macet_rt  = route_df[route_df['live_level'] == 'Macet']
         safe_rt   = route_df[route_df['live_level'] == 'Lancar'].sort_values('prob_macet')
