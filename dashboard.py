@@ -61,6 +61,15 @@ st.markdown("""
 #MainMenu, footer { visibility: hidden; }
 .stDeployButton, [data-testid="stToolbar"] { display: none !important; }
 
+/* ── always show sidebar toggle button ── */
+[data-testid="collapsedControl"] {
+    visibility: visible !important;
+    display: flex !important;
+    background: var(--bg-2) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 0 var(--radius) var(--radius) 0 !important;
+}
+
 /* ── global ── */
 html, body, .stApp {
     background-color: var(--bg-0) !important;
@@ -276,7 +285,17 @@ def fetch_bmkg_rainfall():
         if best:
             mm_hr = round(float(best.get('tp', 0)) / 3, 1)
             desc  = best.get('weather_desc', '-')
-            station = data.get('lokasi', 'Jakarta Pusat')
+
+            # BMKG API returns lokasi as dict or string depending on version
+            lokasi_raw = data.get('lokasi', {})
+            if isinstance(lokasi_raw, dict):
+                kec   = lokasi_raw.get('kecamatan', '')
+                kota  = (lokasi_raw.get('kotkab', 'Jakarta')
+                         .replace('Kota Adm. ', '').replace('Kota ', ''))
+                station = f"{kec}, {kota}" if kec else kota
+            else:
+                station = str(lokasi_raw) if lokasi_raw else 'Jakarta Pusat'
+
             return mm_hr, desc, station, None
 
         return None, None, None, "Data prakiraan tidak ditemukan dalam respons BMKG."
